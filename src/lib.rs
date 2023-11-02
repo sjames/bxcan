@@ -613,9 +613,9 @@ where
             .ier
             .modify(|r, w| unsafe { w.bits(r.bits() & !interrupts.bits()) })
     }
-    pub unsafe fn enable_fifo0_pending_interrupt(&mut self) {
+    pub unsafe fn enable_fifo0_pending_interrupt() {
         let interrupts = Interrupts::FIFO0_MESSAGE_PENDING;
-        self.registers()
+        Self::registers_static()
             .ier
             .modify(|r, w| unsafe { w.bits(r.bits() | interrupts.bits()) })
     }
