@@ -471,6 +471,10 @@ where
         unsafe { &*I::REGISTERS }
     }
 
+    unsafe fn registers_static() -> &'static RegisterBlock {
+        unsafe { &*I::REGISTERS }
+    }
+
     fn set_bit_timing(&mut self, btr: u32) {
         // Mask of all non-reserved BTR bits, except the mode flags.
         const MASK: u32 = 0x037F_03FF;
@@ -602,6 +606,32 @@ where
         self.registers()
             .ier
             .modify(|r, w| unsafe { w.bits(r.bits() & !interrupts.bits()) })
+    }
+    pub unsafe fn disable_fifo0_pending_interrupt() {
+        let interrupts = Interrupts::FIFO0_MESSAGE_PENDING;
+        Self::registers_static()
+            .ier
+            .modify(|r, w| unsafe { w.bits(r.bits() & !interrupts.bits()) })
+    }
+    pub unsafe fn enable_fifo0_pending_interrupt(&mut self) {
+        let interrupts = Interrupts::FIFO0_MESSAGE_PENDING;
+        self.registers()
+            .ier
+            .modify(|r, w| unsafe { w.bits(r.bits() | interrupts.bits()) })
+    }
+
+    pub unsafe fn disable_fifo1_pending_interrupt() {
+        let interrupts = Interrupts::FIFO1_MESSAGE_PENDING;
+        Self::registers_static()
+            .ier
+            .modify(|r, w| unsafe { w.bits(r.bits() & !interrupts.bits()) })
+    }
+    
+    pub unsafe fn  enable_fifo1_pending_interrupt(&mut self) {
+        let interrupts = Interrupts::FIFO1_MESSAGE_PENDING;
+        self.registers()
+            .ier
+            .modify(|r, w| unsafe { w.bits(r.bits() | interrupts.bits()) })
     }
 
     /// Clears the pending flag of [`Interrupt::Sleep`].
